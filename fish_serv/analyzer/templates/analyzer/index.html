@@ -1,0 +1,162 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+    <meta charset="UTF-8">
+    <title>Phishing Analyzer</title>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            margin: 0;
+            padding: 0;
+        }
+
+        .container {
+            max-width: 700px;
+            margin: 50px auto;
+            background-color: white;
+            padding: 30px 40px;
+            border-radius: 10px;
+            box-shadow: 0 0 20px rgba(0,0,0,0.1);
+        }
+
+        h1, h2 {
+            text-align: center;
+            color: #333;
+        }
+
+        form {
+            display: flex;
+            flex-direction: row;
+            align-items: center;
+            gap: 15px;
+            margin-bottom: 30px;
+        }
+
+        input[type="file"] {
+            font-size: 16px;
+        }
+
+        button {
+            background-color: #583E23;
+            color: white;
+            padding: 10px 20px;
+            font-size: 16px;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+
+        button:hover {
+            background-color: #3f2b17;
+        }
+
+        ul {
+            list-style-type: none;
+            padding: 0;
+        }
+
+        li {
+            background-color: #fafafa;
+            margin-bottom: 10px;
+            padding: 15px;
+            border-left: 6px solid #ccc;
+            font-size: 18px;
+            border-radius: 6px;
+        }
+
+        a {
+            color: #007bff;
+            text-decoration: none;
+        }
+
+        a:hover {
+            text-decoration: underline;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Phishing Analyzer</h1>
+        <form method="POST" enctype="multipart/form-data">
+            {% csrf_token %}
+            <input type="file" name="file" required>
+            <button type="submit">Завантажити</button>
+        </form>
+
+        <h2>Завантажені файли</h2>
+        <ul>
+            {% for file in files %}
+                <li>
+                    <a href="{{ file.file.url }}">{{ file.file.name }}</a> —
+                    Risk Score: <span id="score-{{ file.id }}">{{ file.risk_score }}</span> —
+                    <span id="status-{{ file.id }}">
+                        {% if file.status == 'analyzing' %}
+                            <span style="color: gray;">Файл аналізується</span>
+                        {% elif file.risk_score > 5 %}
+                            <span style="color: red;">Файл небезпечний</span>
+                        {% elif file.risk_score > 0 %}
+                            <span style="color: orange;">Файл підозрілий</span>
+                        {% else %}
+                            <span style="color: green;">Файл безпечний</span>
+                        {% endif %}
+                    </span>
+                </li>
+            {% endfor %}
+        </ul>
+
+        {{ files_json|json_script:"file-list" }}
+
+        <script>
+            document.addEventListener("DOMContentLoaded", function () {
+                const fileListData = JSON.parse(document.getElementById("file-list").textContent);
+
+                function updateFileStatus(file) {
+                    fetch(`/status/${file.id}/`)
+                        .then(response => response.json())
+                        .then(data => {
+                            if (data.status === "done") {
+                                const scoreSpan = document.getElementById("score-" + file.id);
+                                const statusSpan = document.getElementById("status-" + file.id);
+                                scoreSpan.textContent = data.risk_score;
+
+                                let text = "";
+                                let color = "";
+
+                                if (data.risk_score > 5) {
+                                    text = "Файл небезпечний";
+                                    color = "red";
+                                } else if (data.risk_score > 0) {
+                                    text = "Файл підозрілий";
+                                    color = "orange";
+                                } else {
+                                    text = "Файл безпечний";
+                                    color = "green";
+                                }
+
+                                statusSpan.innerHTML = `<span style="color: ${color};">${text}</span>`;
+                            }
+                        });
+                }
+
+                function pollStatuses() {
+                    fileListData.forEach(file => {
+                        const statusElem = document.getElementById("status-" + file.id);
+                        if (statusElem) {
+                            const statusText = statusElem.textContent.trim();
+                            if (statusText === "Файл аналізується") {
+                                updateFileStatus(file);
+                            }
+                        }
+                    });
+                }
+
+                setInterval(pollStatuses, 5000); // кожні 5 секунд
+            });
+        </script>
+    </div>
+</body>
+</html>
