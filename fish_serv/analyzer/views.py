@@ -54,3 +54,6 @@ def get_file_status(request, file_id):
         })
     except UploadedFile.DoesNotExist:
         return JsonResponse({"error": "Not found"}, status=404)
+    
+def firewall_settings(request):
+    return render(request, 'analyzer/settings.html')

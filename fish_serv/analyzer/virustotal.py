@@ -9,7 +9,7 @@ VT_BASE = 'https://www.virustotal.com/api/v3'
 
 def scan_link(url):
     headers = {
-        "x-apikey": ""
+        "x-apikey": "afe50b9fc0d8ff727a7d3b45f9530f81962b1f460073395ae238bb9bb63c28dd"
     }
 
     print(f"[→] Відправка посилання: {url}")
@@ -28,7 +28,7 @@ def scan_link(url):
 
 def get_url_scan_result(analysis_id):
     headers = {
-        "x-apikey": ""
+        "x-apikey": "afe50b9fc0d8ff727a7d3b45f9530f81962b1f460073395ae238bb9bb63c28dd"
     }
 
     url = f"{VT_BASE}/analyses/{analysis_id}"
@@ -50,7 +50,7 @@ def get_url_scan_result(analysis_id):
 
 def scan_file(filepath):
     headers = {
-        "x-apikey": ""
+        "x-apikey": "afe50b9fc0d8ff727a7d3b45f9530f81962b1f460073395ae238bb9bb63c28dd"
     }
 
     normalized_path = os.path.normpath(filepath)
@@ -70,7 +70,7 @@ def scan_file(filepath):
 
 def get_scan_result(analysis_id):
     headers = {
-        "x-apikey": ""
+        "x-apikey": "afe50b9fc0d8ff727a7d3b45f9530f81962b1f460073395ae238bb9bb63c28dd"
     }
 
     url = f"{VT_BASE}/analyses/{analysis_id}"

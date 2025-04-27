@@ -8,13 +8,13 @@
     <style>
         body {
             font-family: Arial, sans-serif;
-            background-color: #f4f4f4;
+            background-color: #fdf8ed;
             margin: 0;
             padding: 0;
         }
 
         .container {
-            max-width: 700px;
+            max-width: 850px;
             margin: 50px auto;
             background-color: white;
             padding: 30px 40px;
@@ -33,13 +33,15 @@
             align-items: center;
             gap: 15px;
             margin-bottom: 30px;
+            justify-content: space-between;
         }
 
         input[type="file"] {
             font-size: 16px;
+            flex-grow: 1;
         }
 
-        button {
+        button, .settings-link {
             background-color: #583E23;
             color: white;
             padding: 10px 20px;
@@ -48,9 +50,10 @@
             border-radius: 6px;
             cursor: pointer;
             transition: background-color 0.3s;
+            text-decoration: none;
         }
 
-        button:hover {
+        button:hover, .settings-link:hover {
             background-color: #3f2b17;
         }
 
@@ -84,7 +87,10 @@
         <form method="POST" enctype="multipart/form-data">
             {% csrf_token %}
             <input type="file" name="file" required>
-            <button type="submit">Завантажити</button>
+            <div>
+                <button type="submit">Завантажити</button>
+                <a class="settings-link" href="/settings/">Налаштування</a>
+            </div>
         </form>
 
         <h2>Завантажені файли</h2>
@@ -145,11 +151,8 @@
                 function pollStatuses() {
                     fileListData.forEach(file => {
                         const statusElem = document.getElementById("status-" + file.id);
-                        if (statusElem) {
-                            const statusText = statusElem.textContent.trim();
-                            if (statusText === "Файл аналізується") {
-                                updateFileStatus(file);
-                            }
+                        if (statusElem && statusElem.textContent.includes("аналізується")) {
+                            updateFileStatus(file);
                         }
                     });
                 }
