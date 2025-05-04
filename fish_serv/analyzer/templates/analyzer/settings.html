@@ -1,245 +1,132 @@
+{% load static %}
 <!DOCTYPE html>
 <html lang="uk">
 <head>
   <meta charset="UTF-8" />
   <title>Налаштування правил</title>
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" />
-  <style>
-    body {
-      background-color: #fdf8ed;
-      font-family: Arial, sans-serif;
-    }
-
-    .main-box {
-      max-width: 850px;
-      margin: 50px auto;
-      background-color: white;
-      padding: 2rem;
-      border-radius: 10px;
-      box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
-    }
-
-    .table th,
-    .table td {
-      white-space: nowrap;
-      font-size: 14px;
-      vertical-align: middle;
-    }
-
-    .btn-primary,
-    .btn-outline-primary {
-      background-color: #583e23 !important;
-      border-color: #583e23 !important;
-      color: #fff !important;
-    }
-
-    .btn-primary:hover,
-    .btn-outline-primary:hover {
-      background-color: #3f2b17 !important;
-      border-color: #3f2b17 !important;
-      color: #fff !important;
-    }
-
-    .btn-outline-light {
-      color: white !important;
-      border-color: white !important;
-      background-color: transparent !important;
-    }
-
-    .btn-outline-light:hover {
-      background-color: white !important;
-      color: #583e23 !important;
-    }
-
-    .card-header.bg-primary {
-      background-color: #583e23 !important;
-      border-color: #583e23 !important;
-    }
-
-    .rules-section {
-      max-height: 400px;
-      overflow-y: auto;
-    }
-
-    #rules-table thead th {
-      position: sticky;
-      top: 0;
-      background-color: #f8f9fa;
-      z-index: 2;
-    }
-
-    #add-rule-form {
-      display: none;
-      margin-top: 1rem;
-    }
-
-    .custom-switch-wrapper {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      margin-bottom: 1.2rem;
-    }
-
-    .custom-switch {
-      position: relative;
-      width: 28px;
-      height: 16px;
-      flex-shrink: 0;
-    }
-
-    .custom-switch input {
-      opacity: 0;
-      width: 0;
-      height: 0;
-    }
-
-    .slider {
-      position: absolute;
-      cursor: pointer;
-      background-color: #ccc;
-      border-radius: 34px;
-      top: 0;
-      left: 0;
-      right: 0;
-      bottom: 0;
-      transition: 0.3s;
-    }
-
-    .slider:before {
-      position: absolute;
-      content: "";
-      height: 10px;
-      width: 10px;
-      left: 3px;
-      top: 3px;
-      background-color: white;
-      transition: 0.3s;
-      border-radius: 50%;
-    }
-
-    .custom-switch input:checked + .slider {
-      background-color: #583e23;
-    }
-
-    .custom-switch input:checked + .slider:before {
-      transform: translateX(12px);
-      background-color: white;
-    }
-
-    .custom-switch input:focus + .slider {
-      box-shadow: 0 0 0 0.2rem rgba(88, 62, 35, 0.3);
-    }
-
-    .delete-btn {
-      color: #dc3545;
-      cursor: pointer;
-      font-size: 24px;
-      float: right;
-    }
-
-    .delete-btn:hover {
-      color: #a7131d;
-      text-decoration: none;
-    }
-  </style>
+  <link rel="stylesheet" href="{% static 'css/styles.css' %}">
+  <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+  <script src="{% static 'js/scripts.js' %}"></script>
 </head>
 <body>
-  <div class="main-box">
-    <div class="d-flex justify-content-between align-items-center mb-4">
-      <h2 class="mb-0">Налаштування правил фільтрації</h2>
-      <a href="/" class="btn btn-outline-primary">Головна</a>
-    </div>
-
-    <div class="card mb-4">
-      <div class="card-header bg-primary text-white d-flex justify-content-between align-items-center">
-        <span>Активні правила</span>
-        <button id="show-rule-form-btn" class="btn btn-outline-light btn-sm">Створити правило</button>
-      </div>
-
-      <div class="rules-section">
-        <table class="table table-striped mb-0" id="rules-table">
-          <thead class="table-light">
-            <tr>
-              <th>Отримувач</th>
-              <th>Відправник</th>
-              <th>Дія</th>
-              <th>Пріоритет</th>
-              <th></th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr data-default="true">
-              <td>*</td>
-              <td>*</td>
-              <td><span class="badge bg-warning text-dark">CHECK</span></td>
-              <td>10000</td>
-              <td></td>
-            </tr>
-          </tbody>
-        </table>
-      </div>
-
-      <form id="add-rule-form" class="px-3 pb-3">
-        <div class="row g-2 align-items-end">
-          <div class="col-md-3">
-            <label for="recipientInput" class="form-label">Отримувач</label>
-            <input type="text" class="form-control" id="recipientInput" required />
+    <div class="main-box">
+        <div class="d-flex justify-content-between align-items-center mb-4">
+          <h2 class="mb-0">Налаштування правил фільтрації</h2>
+          <a href="/" class="btn btn-outline-primary">Головна</a>
+        </div>
+    
+        <div class="card mb-4">
+          <div class="card-header bg-primary text-white d-flex justify-content-between align-items-center">
+            <span>Активні правила</span>
+            <button id="show-rule-form-btn" class="btn btn-outline-light btn-sm">Створити правило</button>
           </div>
-          <div class="col-md-3">
-            <label for="senderInput" class="form-label">Відправник</label>
-            <input type="text" class="form-control" id="senderInput" required />
+    
+          <div class="rules-section">
+            <table class="table table-striped mb-0" id="rules-table">
+              <thead class="table-light">
+                <tr>
+                  <th>Отримувач</th>
+                  <th>Відправник</th>
+                  <th>Дія</th>
+                  <th>Пріоритет</th>
+                  <th></th>
+                </tr>
+              </thead>
+              <tbody>
+                {% for rule in rules %}
+                  <tr class="rule-row">
+                    <td style="white-space: pre-line;">{{ rule.recipient }}</td>
+                    <td style="white-space: pre-line;">{{ rule.sender }}</td>
+                    {% if rule.action == 'check' %}
+                      <td><span class="badge bg-warning text-dark">CHECK</span></td>
+                    {% elif rule.action == 'drop' %}
+                      <td><span class="badge bg-danger">DROP</span></td>
+                    {% else %}
+                      <td><span class="badge bg-success">ALLOW</span></td>
+                    {% endif %}
+                    <td>{{ rule.priority }}</td>
+                    <td style="text-align: right; width: 40px; vertical-align: middle;">
+                      {% if rule.priority != 10000 %}
+                        <button class="btn p-0 m-0 delete-rule-btn" data-id="{{ rule.id }}" title="Видалити">
+                          <img src="{% static 'images/del.png' %}" alt="✖" style="width: 20px; height: 20px; margin: 5px;">
+                        </button>
+                      {% endif %}
+                    </td>
+                  </tr>
+                {% endfor %}
+                <tr data-default="true">
+                  <td>*</td>
+                  <td>*</td>
+                  <td><span class="badge bg-warning text-dark">CHECK</span></td>
+                  <td>10000</td>
+                  <td style="text-align: right; width: 40px; vertical-align: middle;"></td>
+                </tr>
+              </tbody>
+            </table>
           </div>
-          <div class="col-md-2">
-            <label for="actionSelect" class="form-label">Дія</label>
-            <select class="form-select" id="actionSelect" required>
-              <option value="allow">Дозволити</option>
-              <option value="check">Перевірити</option>
-              <option value="drop">Заборонити</option>
-            </select>
-          </div>
-          <div class="col-md-2">
-            <label for="priorityInput" class="form-label">Пріоритет</label>
-            <input type="number" class="form-control" id="priorityInput" min="1" max="9999" value="100" required />
-          </div>
-          <div class="col-md-2 d-grid">
-            <button type="submit" class="btn btn-primary">Додати правило</button>
+    
+          <form id="add-rule-form" class="px-3 pb-3">
+            <div class="row g-2 align-items-end">
+              <div class="col-md-3">
+                <label for="recipientInput" class="form-label">Отримувач</label>
+                <input type="text" class="form-control" id="recipientInput" required />
+              </div>
+              <div class="col-md-3">
+                <label for="senderInput" class="form-label">Відправник</label>
+                <input type="text" class="form-control" id="senderInput" required />
+              </div>
+              <div class="col-md-2">
+                <label for="actionSelect" class="form-label">Дія</label>
+                <select class="form-select" id="actionSelect" required>
+                  <option value="allow">Дозволити</option>
+                  <option value="check">Перевірити</option>
+                  <option value="drop">Заборонити</option>
+                </select>
+              </div>
+              <div class="col-md-2">
+                <label for="priorityInput" class="form-label">Пріоритет</label>
+                <input type="number" class="form-control" id="priorityInput" min="1" max="9999" value="100" required />
+              </div>
+              <div class="col-md-2 d-grid">
+                <button type="submit" class="btn btn-primary">Додати правило</button>
+              </div>
+            </div>
+          </form>
+        </div>
+    
+        <div class="card">
+          <div class="card-header bg-primary text-white">Додаткові налаштування</div>
+          <div class="card-body">
+            <form>
+              <div class="custom-switch-wrapper">
+                <label class="custom-switch">
+                  <input type="checkbox" id="storeDroppedSwitch" {% if save_drop %}checked{% endif %} />
+                  <span class="slider"></span>
+                </label>
+                <label for="storeDroppedSwitch">Зберігати дропнуті листи на сервері</label>
+              </div>
+    
+              <div class="custom-switch-wrapper">
+                <label class="custom-switch">
+                  <input type="checkbox" id="forwardToSecuritySwitch" {% if redirect_to_sec %}checked{% endif %} />
+                  <span class="slider"></span>
+                </label>
+                <label for="forwardToSecuritySwitch">Пересилати підозрілі листи у відділ кібербезпеки</label>
+              </div>
+    
+              <div class="mb-3">
+                <label for="securityEmail" class="form-label">Пошта відділу кібербезпеки</label>
+                <input type="email" class="form-control" id="securityEmail" placeholder="security@example.com" value="{{ sec_email }}" {% if not redirect_to_sec %}disabled{% endif %} />
+              </div>
+    
+              <button type="submit" class="btn btn-primary">Зберегти</button>
+            </form>
           </div>
         </div>
-      </form>
-    </div>
-
-    <div class="card">
-      <div class="card-header bg-primary text-white">Додаткові налаштування</div>
-      <div class="card-body">
-        <form>
-          <div class="custom-switch-wrapper">
-            <label class="custom-switch">
-              <input type="checkbox" id="storeDroppedSwitch" />
-              <span class="slider"></span>
-            </label>
-            <label for="storeDroppedSwitch">Зберігати дропнуті листи на сервері</label>
-          </div>
-
-          <div class="custom-switch-wrapper">
-            <label class="custom-switch">
-              <input type="checkbox" id="forwardToSecuritySwitch" />
-              <span class="slider"></span>
-            </label>
-            <label for="forwardToSecuritySwitch">Пересилати підозрілі листи у відділ кібербезпеки</label>
-          </div>
-
-          <div class="mb-3">
-            <label for="securityEmail" class="form-label">Пошта відділу кібербезпеки</label>
-            <input type="email" class="form-control" id="securityEmail" placeholder="security@example.com" disabled />
-          </div>
-
-          <button type="submit" class="btn btn-primary">Зберегти</button>
-        </form>
       </div>
-    </div>
-  </div>
 
-  <script>
+  <!-- <script>
     const forwardSwitch = document.getElementById("forwardToSecuritySwitch");
     const emailField = document.getElementById("securityEmail");
     const formBlock = document.getElementById("add-rule-form");
@@ -260,63 +147,67 @@
       rows.forEach((row) => table.insertBefore(row, table.querySelector("tr[data-default='true']")));
     }
 
-    function createDeleteButton() {
+    function createDeleteButton(id) {
       const btn = document.createElement("span");
       btn.className = "delete-btn";
       btn.innerHTML = "&times;";
       btn.title = "Видалити";
       btn.onclick = function () {
         if (confirm("Ви впевнені, що хочете видалити це правило?")) {
-          this.closest("tr").remove();
+          axios.delete(`/api/rules/${id}/`).then(() => {
+            this.closest("tr").remove();
+          });
         }
       };
       return btn;
     }
 
-    document.getElementById("add-rule-form").addEventListener("submit", function (e) {
-      e.preventDefault();
-
-      const recipient = document.getElementById("recipientInput").value;
-      const sender = document.getElementById("senderInput").value;
-      const action = document.getElementById("actionSelect").value;
-      const priority = parseInt(document.getElementById("priorityInput").value);
+    function renderRule(rule) {
+      const table = document.querySelector("#rules-table tbody");
 
       const badgeClass = {
         allow: "bg-success",
         check: "bg-warning text-dark",
         drop: "bg-danger",
-      }[action];
+      }[rule.action];
 
-      const badgeText = {
-        allow: "ALLOW",
-        check: "CHECK",
-        drop: "DROP",
-      }[action];
-
-      const table = document.querySelector("#rules-table tbody");
+      const badgeText = rule.action.toUpperCase();
 
       const newRow = document.createElement("tr");
+      newRow.classList.add("rule-row");
       newRow.innerHTML = `
-        <td>${recipient}</td>
-        <td>${sender}</td>
+        <td>${rule.recipient}</td>
+        <td>${rule.sender}</td>
         <td><span class="badge ${badgeClass}">${badgeText}</span></td>
-        <td>${priority}</td>
-        <td></td>
+        <td>${rule.priority}</td>
       `;
-      newRow.lastElementChild.appendChild(createDeleteButton());
-
+      if (rule.priority !== 10000) newRow.appendChild(createDeleteButton(rule.id));
       table.appendChild(newRow);
+    }
+
+    document.getElementById("add-rule-form").addEventListener("submit", function (e) {
+      e.preventDefault();
+
+      const data = {
+        recipient: document.getElementById("recipientInput").value,
+        sender: document.getElementById("senderInput").value,
+        action: document.getElementById("actionSelect").value,
+        priority: parseInt(document.getElementById("priorityInput").value),
+      };
+
+      axios.post("/api/rules/", data).then(response => {
+        renderRule(response.data);
+        sortRulesTable();
+        e.target.reset();
+        e.target.style.display = "none";
+      });
+    });
+
+    // Load existing rules
+    axios.get("/api/rules/").then(response => {
+      response.data.forEach(renderRule);
       sortRulesTable();
-
-      e.target.reset();
-      e.target.style.display = "none";
     });
-
-    // Ініціалізація delete кнопок
-    document.querySelectorAll("#rules-table tbody tr:not([data-default='true'])").forEach((row) => {
-      const cell = row.cells[4];
-      cell.appendChild(createDeleteButton());
-    });
-  </script>
+  </script> -->
 </body>
 </html>
