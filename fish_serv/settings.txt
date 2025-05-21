@@ -3,4 +3,4 @@ SETTINGS_UPDT=FALSE
 
 SAVE_DROP=ON
 REDIRECT_TO_SEC=ON
-SEC_EMAIL=111@gmail.com
+SEC_EMAIL=security_department@company.local

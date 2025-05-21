@@ -1,0 +1,12 @@
+Message-ID: <ad19675a-8aa7-4266-a634-1d3f429536a5@attacker.example>
+Date: Mon, 12 May 2025 12:55:41 +0300
+MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Content-Language: en-GB
+To: user1@company.local
+From: "Mr. Attacker" <hacker@attacker.example>
+Subject: hi
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+
+hi

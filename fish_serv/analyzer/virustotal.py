@@ -1,20 +1,25 @@
 import requests
 import time
 import os
-
-# from ..keys import VIRUSTOTAL_KEY
-
-VT_BASE = 'https://www.virustotal.com/api/v3'
+from dotenv import load_dotenv
+import os
 
 
+load_dotenv()
+VT_API_KEY = os.getenv("VT_API_KEY")
+
+VT_BASE = "https://www.virustotal.com/api/v3"
+
+
+# Функція для відправки посилання на аналіз та отримання id 
 def scan_link(url):
     headers = {
-        "x-apikey": "afe50b9fc0d8ff727a7d3b45f9530f81962b1f460073395ae238bb9bb63c28dd"
+        "x-apikey": VT_API_KEY
     }
 
     print(f"[→] Відправка посилання: {url}")
 
-    # Потрібно передавати як form-data (не url=...)
+    # Відправляємо на Virustotal посилання
     response = requests.post(f"{VT_BASE}/urls", data={"url": url}, headers=headers)
 
     if response.status_code == 200:
@@ -24,17 +29,18 @@ def scan_link(url):
     else:
         print("[✗] Помилка при відправленні:", response.text)
         return None
-    
 
+
+# Функція для отримання результату аналізу посилання
 def get_url_scan_result(analysis_id):
     headers = {
-        "x-apikey": "afe50b9fc0d8ff727a7d3b45f9530f81962b1f460073395ae238bb9bb63c28dd"
+        "x-apikey": VT_API_KEY
     }
 
     url = f"{VT_BASE}/analyses/{analysis_id}"
     print(f"[…] Отримую результати для {analysis_id}...")
 
-    # Чекаємо результат
+    # Кожні 2 секунди відправляємо посилання на аналіз
     for _ in range(150):
         response = requests.get(url, headers=headers)
         data = response.json()
@@ -42,19 +48,22 @@ def get_url_scan_result(analysis_id):
         if status == "completed":
             stats = data["data"]["attributes"]["stats"]
             print(f"[✓] Результат: {stats}")
-            return stats
-        time.sleep(2)
+            return stats # Повертаємо результат аналізу
+        time.sleep(2) # Чекаємо результат протягом 300 секунд
 
     print("[✗] Час очікування перевищено")
     return None
 
+
+# Функція для відправки файла на аналіз та отримання id 
 def scan_file(filepath):
     headers = {
-        "x-apikey": "afe50b9fc0d8ff727a7d3b45f9530f81962b1f460073395ae238bb9bb63c28dd"
+        "x-apikey": VT_API_KEY
     }
 
     normalized_path = os.path.normpath(filepath)
 
+    # Відкриваємо та відправляємо файл
     with open(normalized_path, "rb") as f:
         files = {"file": (os.path.basename(normalized_path), f)}
         response = requests.post(f"{VT_BASE}/files", files=files, headers=headers)
@@ -68,15 +77,17 @@ def scan_file(filepath):
         return None
 
 
+# Функція для отримання результату аналізу файлу
 def get_scan_result(analysis_id):
     headers = {
-        "x-apikey": "afe50b9fc0d8ff727a7d3b45f9530f81962b1f460073395ae238bb9bb63c28dd"
+        "x-apikey": VT_API_KEY
     }
 
     url = f"{VT_BASE}/analyses/{analysis_id}"
     print(f"[…] Отримую результати для {analysis_id}...")
 
-    # Чекаємо результат
+    
+    # Кожні 2 секунди відправляємо запит на Virustotal 
     for _ in range(150):
         response = requests.get(url, headers=headers)
         data = response.json()
@@ -84,8 +95,8 @@ def get_scan_result(analysis_id):
         if status == "completed":
             stats = data["data"]["attributes"]["stats"]
             print(f"[✓] Результат: {stats}")
-            return stats
-        time.sleep(2)
+            return stats # Повертаємо результат аналізу
+        time.sleep(2) # Чекаємо результат протягом 300 секунд
 
     print("[✗] Час очікування перевищено")
     return None
